@@ -34,11 +34,7 @@ async def save_location(m: types.Message, state: FSMContext):
         ).dict()
     )
     loc_id = res.inserted_id
-    await m.answer(
-        "Как хочешь назвать это место? ✨",
-        reply_markup=types.InlineKeyboardMarkup(
-            inline_keyboard=[[cancel_button]]
-    ))    
+    await m.answer("Как хочешь назвать это место? ✨")  
     await state.set_state(SaveLocation.enter_name)
     await state.set_data({"loc_id": loc_id})
     
@@ -57,6 +53,7 @@ async def save_name(m: types.Message, state: FSMContext):
     if res.modified_count:
         await m.answer(f"Сохранил с именем: <b>{m.text}</b>")
     else:
-        await m.answer(f"Произошла ошибка, сохранил без имени 🙄") 
+        await m.answer(f"Произошла ошибка, сохранил без имени 🙄")
+    await m.answer("👇") 
     await state.clear()
     

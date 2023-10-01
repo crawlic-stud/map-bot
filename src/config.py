@@ -32,3 +32,4 @@ locations_db = db["locations"]
 app = FastAPI()
 API_HOST = os.getenv("UVICORN_HOST")
 API_PORT = int(os.getenv("API_PORT"))
+MAPS_URL = os.getenv("MAPS_URL")
