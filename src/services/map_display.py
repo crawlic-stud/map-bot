@@ -1,7 +1,13 @@
-from pathlib import Path
+import random
+
 import folium
 
 from models import LocationInDb
+
+
+COLORS = ['red', 'blue', 'green', 'purple', 'orange', 'darkred',
+          'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue',
+          'darkpurple', 'pink', 'lightblue', 'lightgreen']
 
 
 def create_map(locations: list[LocationInDb]) -> folium.Map:
@@ -11,7 +17,9 @@ def create_map(locations: list[LocationInDb]) -> folium.Map:
             location=[loc.latitude, loc.longitude],
             tooltip=loc.name,
             popup=loc.name,
-            icon=folium.Icon(icon="globe"),
+            icon=folium.Icon(
+                icon="globe",
+                color=random.choice(COLORS)),
         ).add_to(m)
     return m
 
