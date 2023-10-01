@@ -32,4 +32,6 @@ locations_db = db["locations"]
 app = FastAPI()
 API_HOST = os.getenv("UVICORN_HOST")
 API_PORT = int(os.getenv("API_PORT"))
-MAPS_URL = os.getenv("MAPS_URL")
+WEB_APP_URL = os.getenv("MAPS_URL")
+MAPS_BUTTON_NAME = "Моя карта 🗺"
+MAPS_BASE_URL = f"{WEB_APP_URL}/map"

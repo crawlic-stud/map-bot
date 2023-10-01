@@ -1,16 +1,19 @@
 import logging
 import asyncio
 
-from config import dp, bot, MAPS_URL
+from aiogram.types import BotCommand
+
+from config import dp, bot
 import handlers
 import utils
 
 
 async def main():
-    await utils.set_users_menu_button(
-        bot=bot, 
-        btn_name="Моя карта 🗺", 
-        base_url=f"{MAPS_URL}/map")
+    await bot.set_my_commands([
+        BotCommand(command="help", description="Помощь"),
+        BotCommand(command="map", description="Поделиться картой"),
+    ])
+    await utils.set_users_menu_button(bot=bot)
     await dp.start_polling(bot)
 
 
