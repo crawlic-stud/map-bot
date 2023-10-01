@@ -1,8 +1,10 @@
 import random
+from typing import Any
 
 import folium
 
 from models import LocationInDb
+from config import app
 
 
 COLORS = ['red', 'blue', 'green', 'purple', 'orange', 'darkred',
@@ -11,7 +13,17 @@ COLORS = ['red', 'blue', 'green', 'purple', 'orange', 'darkred',
 
 
 def create_map(locations: list[LocationInDb]) -> folium.Map:
-    m = folium.Map()
+    if locations:
+        loc = locations[0]
+        m = folium.Map(
+            zoom_start=8,
+            location=[loc.latitude, loc.longitude],
+            max_zoom=24,
+        )
+    else:
+        m = folium.Map(
+            max_zoom=24,
+        )
     for loc in locations:
         folium.Marker(
             location=[loc.latitude, loc.longitude],
@@ -21,6 +33,7 @@ def create_map(locations: list[LocationInDb]) -> folium.Map:
                 icon="globe",
                 color=random.choice(COLORS)),
         ).add_to(m)
+
     return m
 
 

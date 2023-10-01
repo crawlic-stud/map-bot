@@ -1,0 +1,18 @@
+{
+  "version": 8,
+  "name": "OSM Liberty",
+  "metadata": {
+    "mapbox:autocomposite": true,
+    "mapbox:type": "template",
+    "openmaptiles:version": "3.x"
+  },
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "url": "https://maputnik.github.io/osm-liberty/style.json"
+    }
+  },
+  "sprite": "https://openmaptiles.github.io/osm-liberty-gl-style/sprite",
+  "glyphs": "https://openmaptiles.github.io/osm-liberty-gl-style/glyphs/{fontstack}/{range}.pbf",
+  "layers": []
+}

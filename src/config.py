@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from pymongo.collection import Collection
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 
 load_dotenv()
@@ -35,3 +36,11 @@ API_PORT = int(os.getenv("API_PORT"))
 WEB_APP_URL = os.getenv("MAPS_URL")
 MAPS_BUTTON_NAME = "Моя карта 🗺"
 MAPS_BASE_URL = f"{WEB_APP_URL}/map"
+
+app.mount(
+    "/static",
+    StaticFiles(
+        directory="src/static"
+    ),
+    "static"
+)
