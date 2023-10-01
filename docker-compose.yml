@@ -4,12 +4,12 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: memory-map-bot
+    container_name: map-bot
   api:
     build:
       context: .
       dockerfile: ./Dockerfile-api
-    container_name: memory-map-api
+    container_name: map-api
     ports:
       - "${API_PORT}:${API_PORT}"
     env_file:
