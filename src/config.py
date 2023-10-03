@@ -8,6 +8,7 @@ from pymongo.collection import Collection
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 
 load_dotenv()
@@ -36,7 +37,10 @@ API_PORT = int(os.getenv("API_PORT"))
 WEB_APP_URL = os.getenv("MAPS_URL")
 MAPS_BUTTON_NAME = "Моя карта 🗺"
 MAPS_BASE_URL = f"{WEB_APP_URL}/map"
+MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
+MAPBOX_STYLE = os.getenv("MAPBOX_STYLE")
 
+templates = Jinja2Templates(directory="src/templates")
 app.mount(
     "/static",
     StaticFiles(

@@ -9,7 +9,7 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "https://maputnik.github.io/osm-liberty/style.json"
+      "url": "https://api.maptiler.com/maps/1abfeef5-4ab5-49cb-b93b-700f8caafaea/style.json?key=gN496wMm9R83wFRuHVjQ"
     }
   },
   "sprite": "https://openmaptiles.github.io/osm-liberty-gl-style/sprite",

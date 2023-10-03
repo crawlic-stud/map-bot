@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    id="map"
+    style="width: 100vw; height: 100vh; margin: 0 auto; padding: 0"
+  >
+    {% for location in locations %}
+    <div
+      id="marker_{{ location._id }}"
+      name="marker"
+      data-latitude="{{ location.latitude }}"
+      data-longitude="{{ location.longitude }}"
+      data-name="{{ location.name }}"
+      hidden
+    ></div>
+    {% endfor %}
+
+    <script>
+      mapboxgl.accessToken = "{{ access_token }}";
+      var markers = document.querySelectorAll('[id^="marker"]');
+      console.log(markers);
+
+      if (markers.length > 0) {
+        var map = new mapboxgl.Map({
+          container: "map",
+          style: "{{ map_style }}",
+          center: [
+            parseFloat(markers[0].dataset.longitude),
+            parseFloat(markers[0].dataset.latitude),
+          ],
+          zoom: 8,
+        });
+      } else {
+        var map = new mapboxgl.Map({
+          container: "map",
+          style: "{{ map_style }}",
+          center: [0, 0],
+          zoom: 2,
+        });
+      }
+
+      var c = 0;
+
+      for (let marker of markers) {
+        c++;
+        var el = document.createElement("div");
+        el.className = "marker";
+        el.style.backgroundImage = "url(../static/heart.svg)";
+        el.style.backgroundRepeat = "no-repeat";
+        el.style.backgroundSize = "cover";
+        el.style.width = "40px";
+        el.style.height = "40px";
+
+        var lat = parseFloat(marker.dataset.latitude);
+        var lng = parseFloat(marker.dataset.longitude);
+
+        new mapboxgl.Marker(el)
+          .setPopup(
+            new mapboxgl.Popup({ offset: 25 }).setHTML(
+              `<h3>Место №${c}</h3><p>${marker.dataset.name}</p>`
+            )
+          )
+          .setLngLat([lng, lat])
+          .addTo(map);
+      }
+    </script>
+  </body>
+</html>

@@ -18,6 +18,8 @@ def create_map(locations: list[LocationInDb]) -> folium.Map:
         m = folium.Map(
             zoom_start=8,
             location=[loc.latitude, loc.longitude],
+            # tiles="http://127.0.0.1:8000/static/map.json",
+            # attr='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             max_zoom=24,
         )
     else:
