@@ -9,11 +9,50 @@
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
       rel="stylesheet"
     />
+    <style>
+      .icon-select {
+        z-index: 5;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 100px;
+        height: 30px;
+        border: 0px;
+        border-radius: 3px;
+        margin-top: 30px;
+        margin-right: 30px;
+      }
+      .icon-label {
+        width: 200px;
+        text-align: right;
+        margin-top: 5px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    </style>
   </head>
-  <body
-    id="map"
-    style="width: 100vw; height: 100vh; margin: 0 auto; padding: 0"
-  >
+  <body style="padding: 0; margin: 0 auto">
+    <div
+      class="container"
+      style="padding: 0; margin: 0 auto; position: relative"
+    >
+      <div class="icon-container">
+        <label for="icon-select" class="icon-select icon-label"
+          >Иконки на карте 👇</label
+        >
+        <select id="icon-select" class="icon-select">
+          {% for icon in icons %}
+          <option value="url(../static/icons/{{ icon.path }})">
+            {{ icon.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div
+        id="map"
+        style="width: 100vw; height: 100vh; margin: 0 auto; padding: 0"
+      ></div>
+    </div>
     {% for location in locations %}
     <div
       id="marker_{{ location._id }}"
@@ -50,12 +89,20 @@
       }
 
       var c = 0;
+      var myMarkers = [];
+
+      var selectElement = document.getElementById("icon-select");
+      selectElement.addEventListener("change", function () {
+        for (let m of myMarkers) {
+          m._element.style.backgroundImage = this.value;
+        }
+      });
 
       for (let marker of markers) {
         c++;
         var el = document.createElement("div");
         el.className = "marker";
-        el.style.backgroundImage = "url(../static/heart.svg)";
+        el.style.backgroundImage = "url(../static/icons/{{ default_icon }})";
         el.style.backgroundRepeat = "no-repeat";
         el.style.backgroundSize = "cover";
         el.style.width = "40px";
@@ -64,14 +111,19 @@
         var lat = parseFloat(marker.dataset.latitude);
         var lng = parseFloat(marker.dataset.longitude);
 
-        new mapboxgl.Marker(el)
+        var newMarker = new mapboxgl.Marker(el)
           .setPopup(
             new mapboxgl.Popup({ offset: 25 }).setHTML(
-              `<h3>Место №${c}</h3><p>${marker.dataset.name}</p>`
+              `
+              <h3>${marker.dataset.name}</h3>
+              <button>test</button>
+              `
             )
           )
           .setLngLat([lng, lat])
           .addTo(map);
+
+        myMarkers.push(newMarker);
       }
     </script>
   </body>

@@ -22,7 +22,9 @@ async def get_default_for_user(user_id: int, request: Request) -> HTMLResponse:
             "request": request,
             "locations": raw_locs,
             "access_token": MAPBOX_TOKEN,
-            "map_style": MAPBOX_STYLE
+            "map_style": MAPBOX_STYLE,
+            "icons": [item.dict() for item in utils.get_all_icons()],
+            "default_icon": "marker.svg"
         })
 
 

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel
@@ -6,6 +7,7 @@ from aiogram import Bot
 from aiogram.types import MenuButtonWebApp, WebAppInfo
 
 from config import locations_db, MAPS_BASE_URL, MAPS_BUTTON_NAME
+from models import IconInfo
 
 
 def convert_dicts_to_type(lst: list[dict[str, Any]], t: BaseModel):
@@ -35,3 +37,12 @@ async def set_users_menu_button(bot: Bot):
                 web_app=WebAppInfo(url=f"{MAPS_BASE_URL}/{user_id}")
             )
         )
+
+
+def get_all_icons() -> list[IconInfo]:
+    icons_path = Path.cwd() / "src/static/icons"
+    result = []
+    for icon in icons_path.glob("*.svg"):
+        path = icon.name
+        result.append(IconInfo(name=path.replace(".svg", ""), path=path))
+    return result
