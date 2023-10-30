@@ -7,6 +7,7 @@ class LocationInDb(BaseModel):
     longitude: float
     name: str
     user_id: int
+    address: str | None
     tags: list[str] = Field(default_factory=list)
     favorite: bool = False
 

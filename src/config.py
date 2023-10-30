@@ -5,7 +5,7 @@ import os
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 from pymongo.collection import Collection
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -27,9 +27,9 @@ logger = logging.getLogger("bot")
 
 mongo_client = AsyncIOMotorClient(MONGO_URL)
 mongo_client.get_io_loop = asyncio.get_running_loop
-db: Collection = mongo_client[DB_NAME]
+db: AsyncIOMotorCollection = mongo_client[DB_NAME]
 
-locations_db = db["locations"]
+locations_db: AsyncIOMotorCollection = db["locations"]
 
 app = FastAPI()
 API_HOST = os.getenv("UVICORN_HOST")
