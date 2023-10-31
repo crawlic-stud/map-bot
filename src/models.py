@@ -15,3 +15,4 @@ class LocationInDb(BaseModel):
 class IconInfo(BaseModel):
     path: str
     name: str
+    content: str

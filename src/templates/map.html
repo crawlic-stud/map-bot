@@ -16,13 +16,15 @@
       .icon-select {
         z-index: 5;
         position: fixed;
-        top: 10px;
+        bottom: 20px;
         right: 10px;
-        width: 100px;
-        height: 30px;
+        width: 40px;
+        height: 35px;
         border: 0px;
-        border-radius: 3px;
+        border-radius: 5px;
         background-color: rgba(255, 255, 255, 0.507);
+        text-align: center;
+        color: rgba(0,0,0,0);
       }
       .icon-label {
         width: 200px;
@@ -37,6 +39,35 @@
         border: none;
         border-radius: 2px;
       }
+      .icon {
+        background-repeat: no-repeat;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        text-overflow: ellipsis;
+        background-position: center;
+        cursor: pointer;
+      }
+      #dropdown-options {
+        z-index: 5;
+        position: fixed;
+        bottom: 55px;
+        right: 10px;
+        width: 200px;
+        height: auto;
+        border: 0px;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.507);
+        text-align: center;
+        color: rgba(0,0,0,0);
+      }
+      .options-container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .marker-header {
+        text-align: center;
+      }
     </style>
   </head>
   <body style="padding: 0; margin: 0 auto">
@@ -44,18 +75,28 @@
       class="container"
       style="padding: 0; margin: 0 auto; position: relative"
     >
-      <div class="icon-container">
-        <!-- <label for="icon-select" class="icon-select icon-label"
-          >Иконки на карте 👇</label
-        > -->
+
+      <!-- <div class="icon-container">
         <select id="icon-select" class="icon-select">
           {% for icon in icons %}
-          <option value="url(../static/icons/{{ icon.path }})">
+          <option value="url({{ icon.content }})">
             {{ icon.name }}
           </option>
           {% endfor %}
         </select>
-      </div>
+      </div> -->
+
+
+      <!-- <div id="dropdown" class="icon-select" onclick="toggleDropdown()">
+        <div class="icon" id="selected-option" style="background-image: url(../static/icons/{{ default_icon }});"></div>
+        <div id="dropdown-options" style="display: none;">
+          <div class="options-container">
+            {% for icon in icons %}
+            <div class="icon" onclick="selectOption('url({{ icon.content }})')" style="background-image: url({{ icon.content }});">icon</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div> -->
 
       <div
         id="map"
@@ -80,13 +121,6 @@
 
       var myMarkers = [];
 
-      var selectElement = document.getElementById("icon-select");
-      selectElement.addEventListener("change", function () {
-        for (let m of myMarkers) {
-          m._element.style.backgroundImage = this.value;
-        }
-      });
-
       function renderMarkers(map) {
         for (let marker of markers) {
           var el = document.createElement("div");
@@ -97,16 +131,27 @@
           el.style.backgroundSize = "cover";
           el.style.width = "40px";
           el.style.height = "40px";
-
+          
           var lat = parseFloat(marker.dataset.latitude);
           var lng = parseFloat(marker.dataset.longitude);
 
           var newMarker = new mapboxgl.Marker(el)
             .setPopup(
-              new mapboxgl.Popup({ offset: 25 }).setHTML(
+              new mapboxgl.Popup({ offset: 25, width: 100 }).setHTML(
                 `
-                <h3>${marker.dataset.name}</h3>
+                <div id="dropdown" class="icon-select" onclick="toggleDropdown()">
+                  <div class="icon" id="selected-option" style="background-image: url(../static/icons/{{ default_icon }});"></div>
+                  <div id="dropdown-options" style="display: none;">
+                    <div class="options-container">
+                      {% for icon in icons %}
+                      <div class="icon" onclick="selectOption('url({{ icon.content }})')" style="background-image: url({{ icon.content }});">icons</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                <h3 class="marker-header">${marker.dataset.name}</h3>
                 <p>${marker.dataset.address}</p>
+                
                 <button
                   class="delete-btn"
                   onclick="handleDelete(this)"
@@ -120,13 +165,30 @@
             )
             .setLngLat([lng, lat])
             .addTo(map);
-
           myMarkers.push(newMarker);
         }
       }
     </script>
 
     <script>
+      function toggleDropdown() {
+        var dropdownOptions = document.getElementById('dropdown-options');
+        dropdownOptions.style.display = dropdownOptions.style.display === 'none' ? 'block' : 'none';
+      }
+    
+      function selectOption(option) {
+        document.getElementById('selected-option').style.backgroundImage = option;
+        for (let m of myMarkers) {
+          m._element.style.backgroundImage = option;
+        }
+        toggleDropdown();
+        toggleDropdown();
+      }
+    </script>
+
+    <script>
+      
+
       mapboxgl.accessToken = "{{ access_token }}";
       console.log(markers);
 
@@ -149,6 +211,14 @@
         });
       }
       renderMarkers(map);
+
+      // var selectElement = document.getElementById("icon-select");
+      // selectElement.addEventListener("change", function () {
+      //   for (let m of myMarkers) {
+      //     m._element.style.backgroundImage = this.value;
+      //   }
+      // });
+
     </script>
 
     <script>

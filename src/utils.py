@@ -1,5 +1,7 @@
+import base64
 from pathlib import Path
 from typing import Any
+import urllib.parse
 
 from pydantic import BaseModel
 from pymongo.collection import Collection
@@ -41,10 +43,22 @@ async def set_users_menu_button(bot: Bot):
             logger.error(f"Error with user {user_id}: {e}")
 
 
+def replace_default_colors(svg: str) -> str:
+    svg = svg.replace("#4dffd5", "color1")
+    svg = svg.replace("#154515", "color2")
+    return svg
+
+
 def get_all_icons() -> list[IconInfo]:
     icons_path = Path.cwd() / "src/static/icons"
     result = []
     for icon in icons_path.glob("*.svg"):
         path = icon.name
-        result.append(IconInfo(name=path.replace(".svg", ""), path=path))
+        svg = icon.read_text()
+        # svg = replace_default_colors(svg)
+        svg_uri = urllib.parse.quote(svg, safe=":/?=")
+        data_uri = f"data:image/svg+xml,{svg_uri}"
+        result.append(
+            IconInfo(name=path.replace(".svg", ""), path=path, content=data_uri)
+        )
     return result

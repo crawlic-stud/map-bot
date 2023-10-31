@@ -41,10 +41,4 @@ MAPBOX_TOKEN = os.getenv("MAPBOX_TOKEN")
 MAPBOX_STYLE = os.getenv("MAPBOX_STYLE")
 
 templates = Jinja2Templates(directory="src/templates")
-app.mount(
-    "/static",
-    StaticFiles(
-        directory="src/static"
-    ),
-    "static"
-)
+app.mount("/static", StaticFiles(directory="src/static"), "static")
