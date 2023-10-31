@@ -86,18 +86,6 @@
         </select>
       </div> -->
 
-
-      <!-- <div id="dropdown" class="icon-select" onclick="toggleDropdown()">
-        <div class="icon" id="selected-option" style="background-image: url(../static/icons/{{ default_icon }});"></div>
-        <div id="dropdown-options" style="display: none;">
-          <div class="options-container">
-            {% for icon in icons %}
-            <div class="icon" onclick="selectOption('url({{ icon.content }})')" style="background-image: url({{ icon.content }});">icon</div>
-            {% endfor %}
-          </div>
-        </div>
-      </div> -->
-
       <div
         id="map"
         style="width: 100vw; height: 100vh; margin: 0 auto; padding: 0"
@@ -112,6 +100,7 @@
       data-name="{{ location.name }}"
       data-id="{{ location._id }}"
       data-address="{{ location.address }}"
+      data-icon="{{ location.icon if location.icon else 'url(../static/icons/' + default_icon + ')' }}"
       hidden
     ></div>
     {% endfor %}
@@ -126,25 +115,26 @@
           var el = document.createElement("div");
           el.className = "marker";
           el.id = marker.dataset.id;
-          el.style.backgroundImage = "url(../static/icons/{{ default_icon }})";
+          console.log(marker.dataset.icon);
+          el.style.backgroundImage = marker.dataset.icon;
           el.style.backgroundRepeat = "no-repeat";
           el.style.backgroundSize = "cover";
           el.style.width = "40px";
           el.style.height = "40px";
-          
+
           var lat = parseFloat(marker.dataset.latitude);
           var lng = parseFloat(marker.dataset.longitude);
 
           var newMarker = new mapboxgl.Marker(el)
             .setPopup(
-              new mapboxgl.Popup({ offset: 25, width: 100 }).setHTML(
+              new mapboxgl.Popup({ offset: 25 }).setHTML(
                 `
                 <div id="dropdown" class="icon-select" onclick="toggleDropdown()">
-                  <div class="icon" id="selected-option" style="background-image: url(../static/icons/{{ default_icon }});"></div>
+                  <div class="icon" id="selected-option" style="background-image: ${marker.dataset.icon};"></div>
                   <div id="dropdown-options" style="display: none;">
                     <div class="options-container">
                       {% for icon in icons %}
-                      <div class="icon" onclick="selectOption('url({{ icon.content }})')" style="background-image: url({{ icon.content }});">icons</div>
+                      <div class="icon" onclick="selectOption('url({{ icon.content }})', '${marker.dataset.id}')" style="background-image: url({{ icon.content }});">icons</div>
                       {% endfor %}
                     </div>
                   </div>
@@ -176,11 +166,22 @@
         dropdownOptions.style.display = dropdownOptions.style.display === 'none' ? 'block' : 'none';
       }
     
-      function selectOption(option) {
+      function selectOption(option, marker_id) {
         document.getElementById('selected-option').style.backgroundImage = option;
-        for (let m of myMarkers) {
-          m._element.style.backgroundImage = option;
-        }
+        marker = document.getElementById(marker_id);
+        marker.style.backgroundImage = option;
+
+        fetch("/location/" + marker_id, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({icon_data: option})
+        })
+          //.then((response) => response.json())
+          //.then((data) => console.log(data))
+          .catch((error) => {
+            console.error("Error:", error);
+        });
+
         toggleDropdown();
         toggleDropdown();
       }

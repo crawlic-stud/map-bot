@@ -10,9 +10,14 @@ class LocationInDb(BaseModel):
     address: str | None
     tags: list[str] = Field(default_factory=list)
     favorite: bool = False
+    icon: str = "url(../static/icons/marker.svg)"
 
 
 class IconInfo(BaseModel):
     path: str
     name: str
     content: str
+
+
+class PatchIcon(BaseModel):
+    icon_data: str

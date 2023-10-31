@@ -10,7 +10,7 @@ from config import (
     MAPBOX_STYLE,
 )
 import utils
-from models import LocationInDb
+from models import LocationInDb, PatchIcon
 from services import map_display
 
 
@@ -46,3 +46,14 @@ async def delete_location(
     if res.deleted_count:
         return Response(status_code=200)
     return Response(status_code=400)
+
+
+@app.patch("/location/{loc_id}")
+async def change_location_icon(
+    loc_id: str,
+    body: PatchIcon,
+) -> Response:
+    await locations_db.update_one(
+        {"_id": ObjectId(loc_id)}, {"$set": {"icon": body.icon_data}}
+    )
+    return Response(status_code=200)
