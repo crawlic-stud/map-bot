@@ -9,83 +9,14 @@
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-      }
-      .icon-select {
-        z-index: 5;
-        position: fixed;
-        bottom: 20px;
-        right: 10px;
-        width: 40px;
-        height: 35px;
-        border: 0px;
-        border-radius: 5px;
-        background-color: rgba(255, 255, 255, 0.507);
-        text-align: center;
-        color: rgba(0,0,0,0);
-      }
-      .icon-label {
-        width: 200px;
-        text-align: right;
-        margin-top: 5px;
-      }
-      .delete-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgb(255, 203, 203);
-        border: none;
-        border-radius: 2px;
-      }
-      .icon {
-        background-repeat: no-repeat;
-        height: 35px;
-        display: flex;
-        align-items: center;
-        text-overflow: ellipsis;
-        background-position: center;
-        cursor: pointer;
-      }
-      #dropdown-options {
-        z-index: 5;
-        position: fixed;
-        bottom: 55px;
-        right: 10px;
-        width: 200px;
-        height: auto;
-        border: 0px;
-        border-radius: 5px;
-        background-color: rgba(255, 255, 255, 0.507);
-        text-align: center;
-        color: rgba(0,0,0,0);
-      }
-      .options-container {
-        display: flex;
-        flex-wrap: wrap;
-      }
-      .marker-header {
-        text-align: center;
-      }
-    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="../static/styles/map.css" rel="stylesheet"/>
   </head>
   <body style="padding: 0; margin: 0 auto">
     <div
       class="container"
       style="padding: 0; margin: 0 auto; position: relative"
     >
-
-      <!-- <div class="icon-container">
-        <select id="icon-select" class="icon-select">
-          {% for icon in icons %}
-          <option value="url({{ icon.content }})">
-            {{ icon.name }}
-          </option>
-          {% endfor %}
-        </select>
-      </div> -->
-
       <div
         id="map"
         style="width: 100vw; height: 100vh; margin: 0 auto; padding: 0"
@@ -106,6 +37,45 @@
     {% endfor %}
 
     <script>
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      var data = Telegram.WebApp.initDataUnsafe;
+      var user = data.user;
+      if (user) {
+        var userId = user.id;
+      } else {
+        var userId = 0;
+      }
+
+      var path = window.location.pathname;
+      var pageUserId = parseInt(path.split("/").pop());
+      const isOwner = userId === pageUserId;
+      //const isOwner = true;
+
+      console.log(userId);
+      console.log(pageUserId);
+
+      var root = document.documentElement;
+      var firstColor = getComputedStyle(root).getPropertyValue("--tg-theme-bg-color");
+      var secondaryColor = getComputedStyle(root).getPropertyValue("--tg-theme-secondary-bg-color");
+      // console.log(firstColor);
+      // console.log(secondaryColor);
+    
+    </script>
+
+    <script>
+
+      function replaceColorsIfNeeded(svgString) {
+        if (firstColor && secondaryColor) {
+          return svgString.replaceAll("color1", firstColor).replaceAll("color2", secondaryColor) 
+        }
+        // console.log("{{ default_color1 }}");
+        // console.log("{{ default_color2 }}");
+        console.log(svgString);
+        var result = svgString.replaceAll("color1", "%23" + "{{ default_color1 }}").replaceAll("color2", "%23" + "{{ default_color2 }}");
+        return result;
+      }
+
       var markers = document.querySelectorAll('[id^="marker"]');
 
       var myMarkers = [];
@@ -115,8 +85,10 @@
           var el = document.createElement("div");
           el.className = "marker";
           el.id = marker.dataset.id;
-          console.log(marker.dataset.icon);
-          el.style.backgroundImage = marker.dataset.icon;
+          var icon = replaceColorsIfNeeded(marker.dataset.icon);
+          //var icon = marker.dataset.icon;
+          console.log(icon);
+          el.style.backgroundImage = icon;
           el.style.backgroundRepeat = "no-repeat";
           el.style.backgroundSize = "cover";
           el.style.width = "40px";
@@ -124,34 +96,39 @@
 
           var lat = parseFloat(marker.dataset.latitude);
           var lng = parseFloat(marker.dataset.longitude);
+          
+          var popupHTML = `
+            <h3 class="marker-header">${marker.dataset.name}</h3>
+            <p>${marker.dataset.address}</p>
+          `
+
+          if (isOwner) {
+            popupHTML = `
+              <div id="dropdown" class="icon-select" onclick="toggleDropdown()">
+                <div class="icon" id="selected-option" style="background-image: ${icon};"></div>
+                <div id="dropdown-options" style="display: none;">
+                  <div class="options-container">
+                    {% for icon in icons %}
+                    <div class="icon" onclick="selectOption('url({{ icon.content }})', '${marker.dataset.id}')" style="background-image: url({{ icon.content }});">icons</div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              ${popupHTML}
+              <button
+                class="delete-btn"
+                onclick="handleDelete(this)"
+                id="${marker.dataset.id}"
+              >
+                <img src="../static/waste-basket.svg" alt="Delete Icon">
+                Удалить
+              </button>
+            `
+          }
 
           var newMarker = new mapboxgl.Marker(el)
             .setPopup(
-              new mapboxgl.Popup({ offset: 25 }).setHTML(
-                `
-                <div id="dropdown" class="icon-select" onclick="toggleDropdown()">
-                  <div class="icon" id="selected-option" style="background-image: ${marker.dataset.icon};"></div>
-                  <div id="dropdown-options" style="display: none;">
-                    <div class="options-container">
-                      {% for icon in icons %}
-                      <div class="icon" onclick="selectOption('url({{ icon.content }})', '${marker.dataset.id}')" style="background-image: url({{ icon.content }});">icons</div>
-                      {% endfor %}
-                    </div>
-                  </div>
-                </div>
-                <h3 class="marker-header">${marker.dataset.name}</h3>
-                <p>${marker.dataset.address}</p>
-                
-                <button
-                  class="delete-btn"
-                  onclick="handleDelete(this)"
-                  id="${marker.dataset.id}"
-                >
-                  <img src="../static/waste-basket.svg" alt="Delete Icon">
-                  Удалить
-                </button>
-                `
-              )
+              new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML)
             )
             .setLngLat([lng, lat])
             .addTo(map);
@@ -176,12 +153,9 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({icon_data: option})
         })
-          //.then((response) => response.json())
-          //.then((data) => console.log(data))
           .catch((error) => {
             console.error("Error:", error);
         });
-
         toggleDropdown();
         toggleDropdown();
       }
@@ -212,14 +186,6 @@
         });
       }
       renderMarkers(map);
-
-      // var selectElement = document.getElementById("icon-select");
-      // selectElement.addEventListener("change", function () {
-      //   for (let m of myMarkers) {
-      //     m._element.style.backgroundImage = this.value;
-      //   }
-      // });
-
     </script>
 
     <script>

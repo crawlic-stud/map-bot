@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .icon-select {
+    z-index: 5;
+    position: fixed;
+    bottom: 20px;
+    right: 10px;
+    width: 40px;
+    height: 35px;
+    border: 0px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.507);
+    text-align: center;
+    color: rgba(0,0,0,0);
+  }
+  .icon-label {
+    width: 200px;
+    text-align: right;
+    margin-top: 5px;
+  }
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(255, 203, 203);
+    border: none;
+    border-radius: 2px;
+  }
+  .icon {
+    background-repeat: no-repeat;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    text-overflow: ellipsis;
+    background-position: center;
+    cursor: pointer;
+  }
+  #dropdown-options {
+    z-index: 5;
+    position: fixed;
+    bottom: 55px;
+    right: 10px;
+    width: 200px;
+    height: auto;
+    border: 0px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.507);
+    text-align: center;
+    color: rgba(0,0,0,0);
+  }
+  .options-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .marker-header {
+    text-align: center;
+  }

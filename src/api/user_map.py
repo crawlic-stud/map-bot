@@ -26,6 +26,8 @@ async def get_default_for_user(user_id: int, request: Request) -> HTMLResponse:
             "map_style": MAPBOX_STYLE,
             "icons": [item.dict() for item in utils.get_all_icons()],
             "default_icon": "marker.svg",
+            "default_color1": utils.DEFAULT_COLOR1,
+            "default_color2": utils.DEFAULT_COLOR2,
         },
     )
 

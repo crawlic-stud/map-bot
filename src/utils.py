@@ -12,6 +12,10 @@ from config import locations_db, logger, MAPS_BASE_URL, MAPS_BUTTON_NAME
 from models import IconInfo
 
 
+DEFAULT_COLOR1 = "4dffd5"
+DEFAULT_COLOR2 = "154515"
+
+
 def convert_dicts_to_type(lst: list[dict[str, Any]], t: BaseModel):
     return [t(**item) for item in lst]
 
@@ -44,8 +48,8 @@ async def set_users_menu_button(bot: Bot):
 
 
 def replace_default_colors(svg: str) -> str:
-    svg = svg.replace("#4dffd5", "color1")
-    svg = svg.replace("#154515", "color2")
+    svg = svg.replace(DEFAULT_COLOR1, "color1")
+    svg = svg.replace(DEFAULT_COLOR2, "color2")
     return svg
 
 
